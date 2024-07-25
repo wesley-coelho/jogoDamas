@@ -58,7 +58,7 @@
     <body>
         <div id="tabuleiro">
             <div class="white-cell"></div>
-            <div id="cell-12" style="background-color: red" class="black-cell"><img id="peca-escura-1" class="peca-escura" src="peca-escura.png" width="70" ></div>
+            <div id="cell-12" class="black-cell"><img id="peca-escura-1" class="peca-escura" src="peca-escura.png" width="70" ></div>
             <div class="white-cell"></div>
             <div id="cell-14" class="black-cell"><img id="peca-escura-2" class="peca-escura" src="peca-escura.png" width="70"></div>
             <div class="white-cell"></div>
@@ -139,54 +139,276 @@
            for(let i = 0; i < pecasEscuras.length; i++){
             pecasEscuras[i].draggable = true;
             pecasEscuras[i].ondragstart = drag;
+            pecasEscuras[i].ondragend = paintDefaultColorCells;
            }
 
            for(let i = 0; i < pecasClaras.length; i++){
             pecasClaras[i].draggable = true;
             pecasClaras[i].ondragstart = drag;
+            pecasClaras[i].ondragend = paintDefaultColorCells;
+            
            }
 
             
            
            function allowDrop(ev){
             ev.preventDefault();
-           }
+              
 
+           }
            
 
            function drag(ev){
             ev.dataTransfer.setData("text", ev.target.id);
-            const originCollumn = parseInt(ev.target.parentNode.id.substr(-1));
-            const originRow = parseInt(ev.target.parentNode.id.substr(5,1));
-            
-            if(originCollumn > 1 && originCollumn < 8){
-               
-                let targetRow = originRow+1;
-                let targetColumn = originCollumn+1;
-                let cellPlus = ("cell-" + targetRow + targetColumn);
-                targetColumn = originCollumn-1;
-                let cellMinus = ("cell-" + targetRow + targetColumn); 
-                if(  !document.getElementById(cellPlus).hasChildNodes()){          
-                    document.getElementById(cellPlus).ondrop = drop;
-                    document.getElementById(cellPlus).ondragover = allowDrop;
+            const coluna = parseInt(ev.target.parentNode.id.substr(-1));
+            const linha = parseInt(ev.target.parentNode.id.substr(5,1));
+            let celulaAtualId = ("cell-" + linha + coluna);
+            document.getElementById(celulaAtualId).removeEventListener('drop', drop);
+            document.getElementById(celulaAtualId).removeEventListener('dragover',allowDrop);
+            var idPecaAtualEscura = ev.target.id.substr(0,11);
+                
+                if ( idPecaAtualEscura == "peca-escura" ){
+                        let linhaSul = linha + 1;
+                        let linhaNorte = linha - 1;
+                        let colunaOeste = coluna - 1;
+                        let colunaLeste = coluna + 1;
+                        
+                        let celulaSudEsteId = ("cell-" + linhaSul + colunaLeste);
+                        let celulaSudOEsteId = ("cell-" + linhaSul + colunaOeste);
+                        let celulaNordEsteId = ("cell-" + linhaNorte + colunaLeste);
+                        let celulaNorOesteId = ("cell-" + linhaNorte + colunaOeste);
+                        if( coluna > 1 && coluna < 8 && linha > 1 && linha < 8){
+                            if( !document.getElementById(celulaSudEsteId).hasChildNodes() ){
+                            document.getElementById(celulaSudEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaSudEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaSudEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaSudEsteId).removeEventListener('dragover',allowDrop);
+                        }               
+                        
+                        if( !document.getElementById(celulaSudOEsteId).hasChildNodes()  ){                    
+                            document.getElementById(celulaSudOEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaSudOEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaSudOEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaSudOEsteId).removeEventListener('dragover',allowDrop);
+                        }
+                        document.getElementById(celulaNordEsteId).removeEventListener('drop', drop);
+                        document.getElementById(celulaNordEsteId).removeEventListener('dragover',allowDrop);
+                        document.getElementById(celulaNorOesteId).removeEventListener('drop', drop);
+                        document.getElementById(celulaNorOesteId).removeEventListener('dragover',allowDrop);
+                        console.log(celulaSudEsteId)
+                        console.log(celulaSudOEsteId)
+                        paintPossibleMovesCells(celulaSudEsteId);
+                        paintPossibleMovesCells(celulaSudOEsteId);    
+                    
+                    }
+
+                    if(  coluna == 1 && linha > 1 && linha < 8){
+                        if( !document.getElementById(celulaSudEsteId).hasChildNodes() ){
+                            document.getElementById(celulaSudEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaSudEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaSudEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaSudEsteId).removeEventListener('dragover',allowDrop);
+                        }    
+                        paintPossibleMovesCells(celulaSudEsteId)
+                        document.getElementById(celulaNordEsteId).removeEventListener('drop', drop);
+                        document.getElementById(celulaNordEsteId).removeEventListener('dragover',allowDrop);
+                    }
+
+                    if(  coluna > 1 && coluna < 8 && linha == 1 ){
+                        if( !document.getElementById(celulaSudEsteId).hasChildNodes() ){
+                            document.getElementById(celulaSudEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaSudEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaSudEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaSudEsteId).removeEventListener('dragover',allowDrop);
+                        } 
+                        
+                        if( !document.getElementById(celulaSudOEsteId).hasChildNodes() ){
+                            document.getElementById(celulaSudOEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaSudOEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaSudOEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaSudOEsteId).removeEventListener('dragover',allowDrop);
+                        }   
+                        paintPossibleMovesCells(celulaSudEsteId)
+                        paintPossibleMovesCells(celulaSudOEsteId)
+                        
+                    }
+
+                    if(  coluna == 8 && linha == 1 ){                   
+                        
+                        if( !document.getElementById(celulaSudOEsteId).hasChildNodes() ){
+                            document.getElementById(celulaSudOEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaSudOEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaSudOEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaSudOEsteId).removeEventListener('dragover',allowDrop);
+                        }   
+                        
+                        paintPossibleMovesCells(celulaSudOEsteId)                    
+                    }
+                    
+
+                    if(  coluna == 8 && linha > 1 && linha < 8){
+                        if( !document.getElementById(celulaSudOEsteId).hasChildNodes() ){
+                            document.getElementById(celulaSudOEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaSudOEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaSudOEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaSudOEsteId).removeEventListener('dragover',allowDrop);
+                        }    
+                        paintPossibleMovesCells(celulaSudOEsteId)
+                        document.getElementById(celulaNorOesteId).removeEventListener('drop', drop);
+                        document.getElementById(celulaNorOesteId).removeEventListener('dragover',allowDrop);
+                    }
+                        
+                        
                 }
-                if(  !document.getElementById(cellMinus).hasChildNodes()){
-                    document.getElementById(cellMinus).ondrop = drop;               
-                    document.getElementById(cellMinus).ondragover = allowDrop;
+                var idPecaAtualClara = ev.target.id.substr(0,10);
+
+                if ( idPecaAtualClara == "peca-clara" ){
+                        let linhaSul = linha + 1;
+                        let linhaNorte = linha - 1;
+                        let colunaOeste = coluna - 1;
+                        let colunaLeste = coluna + 1;
+                        
+                        let celulaSudEsteId = ("cell-" + linhaSul + colunaLeste);
+                        let celulaSudOEsteId = ("cell-" + linhaSul + colunaOeste);
+                        let celulaNordEsteId = ("cell-" + linhaNorte + colunaLeste);
+                        let celulaNorOesteId = ("cell-" + linhaNorte + colunaOeste);
+                        if( coluna > 1 && coluna < 8 && linha > 1 && linha < 8){
+                            if( !document.getElementById(celulaNordEsteId).hasChildNodes() ){
+                            document.getElementById(celulaNordEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaNordEsteId).addEventListener('dragover',allowDrop);
+                            
+                         
+                    
+                        }else{
+                            document.getElementById(celulaNordEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaNordEsteId).removeEventListener('dragover',allowDrop);
+                        }               
+                        
+                        if( !document.getElementById(celulaNorOesteId).hasChildNodes()  ){                    
+                            document.getElementById(celulaNorOesteId).addEventListener('drop', drop);
+                            document.getElementById(celulaNorOesteId).addEventListener('dragover',allowDrop);
+                             
+                        }else{
+                            document.getElementById(celulaNorOesteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaNorOesteId).removeEventListener('dragover',allowDrop);
+                        }
+                        document.getElementById(celulaSudEsteId).removeEventListener('drop', drop);
+                        document.getElementById(celulaSudEsteId).removeEventListener('dragover',allowDrop);
+                        document.getElementById(celulaSudOEsteId).removeEventListener('drop', drop);
+                        document.getElementById(celulaSudOEsteId).removeEventListener('dragover',allowDrop);
+                        console.log(celulaNordEsteId)
+                        console.log(celulaNorOesteId)
+                        paintPossibleMovesCells(celulaNordEsteId);
+                        paintPossibleMovesCells(celulaNorOesteId);  
+                        
+                    }
+
+                    if(  coluna == 8 && linha > 1 && linha < 8){
+                        if( !document.getElementById(celulaNorOesteId).hasChildNodes() ){
+                            document.getElementById(celulaNorOesteId).addEventListener('drop', drop);
+                            document.getElementById(celulaNorOesteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaNorOesteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaNorOesteId).removeEventListener('dragover',allowDrop);
+                        }    
+                        paintPossibleMovesCells(celulaNorOesteId)
+                        document.getElementById(celulaSudOEsteId).removeEventListener('drop', drop);
+                        document.getElementById(celulaSudOEsteId).removeEventListener('dragover',allowDrop);
+                    }
+
+                    if(  coluna > 1 && coluna < 8 && linha == 8 ){
+                        if( !document.getElementById(celulaNordEsteId).hasChildNodes() ){
+                            document.getElementById(celulaNordEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaNordEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaNordEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaNordEsteId).removeEventListener('dragover',allowDrop);
+                        } 
+                        
+                        if( !document.getElementById(celulaNorOesteId).hasChildNodes() ){
+                            document.getElementById(celulaNorOesteId).addEventListener('drop', drop);
+                            document.getElementById(celulaNorOesteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaNorOesteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaNorOesteId).removeEventListener('dragover',allowDrop);
+                        }   
+                        paintPossibleMovesCells(celulaNordEsteId)
+                        paintPossibleMovesCells(celulaNorOesteId)
+                        
+                    }
+
+                    if(  coluna == 1 && linha == 8 ){                   
+                        
+                        if( !document.getElementById(celulaNordEsteId).hasChildNodes() ){
+                            document.getElementById(celulaNordEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaNordEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaNordEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaNordEsteId).removeEventListener('dragover',allowDrop);
+                        }   
+                        
+                        paintPossibleMovesCells(celulaNordEsteId)                    
+                    }
+                    
+
+                    if(  coluna == 1 && linha > 1 && linha < 8){
+                        if( !document.getElementById(celulaNordEsteId).hasChildNodes() ){
+                            document.getElementById(celulaNordEsteId).addEventListener('drop', drop);
+                            document.getElementById(celulaNordEsteId).addEventListener('dragover',allowDrop);
+                        }else{
+                            document.getElementById(celulaNordEsteId).removeEventListener('drop', drop);
+                            document.getElementById(celulaNordEsteId).removeEventListener('dragover',allowDrop);
+                        }    
+                        paintPossibleMovesCells(celulaNordEsteId)
+                        document.getElementById(celulaSudEsteId).removeEventListener('drop', drop);
+                        document.getElementById(celulaSudEsteId).removeEventListener('dragover',allowDrop);
+                    }
+                        
+                        
                 }
-              
+
+                
+
             }
+
+            
+               
+                
+            
             
             // ev.target.parentNode.id) retorna o id do pai
-           }
+        
 
            function drop(ev){
             ev.preventDefault();
             var data = ev.dataTransfer.getData("text");
             ev.target.appendChild(document.getElementById(data));
-              
-
+            var blackCells = document.getElementsByClassName('black-cell');
+            for(let i = 0; i < blackCells.length; i++){
+                blackCells[i].style.backgroundColor = "black";
+                blackCells[i].removeEventListener('drop', drop);
+                blackCells[i].removeEventListener('dragover',allowDrop);
+           }
+                      
             
+           }
+
+           function paintPossibleMovesCells(id){
+               document.getElementById(id).style.backgroundColor = "red";
+           }
+           function paintDefaultColorCells(ev){
+            var blackCells = document.getElementsByClassName('black-cell');
+            for(let i = 0; i < blackCells.length; i++){
+                blackCells[i].style.backgroundColor = "black";
+          
+           }
            }
 
          
